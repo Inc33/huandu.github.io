@@ -2,7 +2,7 @@
 layout: post
 title: "Why do I write note here?"
 description: ""
-category: ""
+category: "thoughts"
 tags: [about]
 ---
 {% include JB/setup %}
