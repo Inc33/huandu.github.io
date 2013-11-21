@@ -71,22 +71,18 @@ There is another article about [XFS optimization](https://pracops.com/wiki/index
 
 I'm using a newly installed Ubuntu 12.04 server. Each time I enter a wrong command, I will see an error message saying.
 
-```
-Sorry, command-not-found has crashed! Please file a bug report at:
-https://bugs.launchpad.net/command-not-found/+filebug
-Please include the following information with the report:
+    Sorry, command-not-found has crashed! Please file a bug report at:
+    https://bugs.launchpad.net/command-not-found/+filebug
+    Please include the following information with the report:
 
-command-not-found version: 0.2.44
-```
+    command-not-found version: 0.2.44
 
 This error message is quite annoying and totally useless.
 
 Following solution comes from [this post](http://ivaniliev.com/sorry-command-not-found-has-crashed/).
 
-```
-export LANGUAGE=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-locale-gen en_US.UTF-8
-sudo dpkg-reconfigure locales
-```
+    export LANGUAGE=en_US.UTF-8
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    locale-gen en_US.UTF-8
+    sudo dpkg-reconfigure locales
