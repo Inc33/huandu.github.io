@@ -49,7 +49,7 @@ Then, make XFS. Assumes the partition 1 is the newly created partition.
 
 Finally, mount this partition to a mount point.
 
-    mount -t xfs /dev/sdb1 /data
+    sudo mount -t xfs /dev/sdb1 /data
 
 Don't forget to edit `/etc/fstab` to mount it at every time server boots.
 
@@ -57,15 +57,15 @@ Don't forget to edit `/etc/fstab` to mount it at every time server boots.
 
 It's said [XFS performs very bad with write barrier](http://www.mysqlperformanceblog.com/2009/03/02/ssd-xfs-lvm-fsync-write-cache-barrier-and-lost-transactions/). If XFS is used on cloud hard disk, which provides 99.99% availability and 3 hot copies, it may be safe to disable barrier.
 
-    mount -t xfs -o nobarrier /dev/sdb1 /data
+    sudo mount -t xfs -o nobarrier /dev/sdb1 /data
 
 There is another article about [XFS optimization](https://pracops.com/wiki/index.php/XFS_optimisation). It ends up with following recommended options.
 
     # Making the filesystem:
-    mkfs.xfs -f -l size=128m,lazy-count=1 filesystem
+    sudo mkfs.xfs -f -l size=128m,lazy-count=1 filesystem
     
     # Mounting the filesystem:
-    mount -o logbufs=8,logbsize=256k,osyncisdsync,barrier,largeio,noatime,nodiratime filesystem
+    sudo mount -o logbufs=8,logbsize=256k,osyncisdsync,barrier,largeio,noatime,nodiratime filesystem
 
 ### Resolve "command not found has crashed" ###
 
@@ -86,3 +86,42 @@ Following solution comes from [this post](http://ivaniliev.com/sorry-command-not
     export LC_ALL=en_US.UTF-8
     locale-gen en_US.UTF-8
     sudo dpkg-reconfigure locales
+
+### Setup `rsync` daemon ###
+
+First, install `rsync` through `apt-get`.
+
+    apt-get install rsync
+
+Here is a full sample coming from [this post](http://www.hartenstine.com/771/install-rsync-on-ubuntu-server-12-04-lts/).
+
+Sample `/etc/rsyncd.conf`:
+
+    motd file = /etc/rsyncd.motd
+
+    [servername]
+    path = /home/username
+    comment = This is the path to folder on the server
+    uid = nobody
+    gid = nobody
+    read only = false
+    auth users = username
+    secrets file = /etc/rsyncd.scrt
+
+Sample `/etc/rsyncd.motd`:
+
+    any message you want
+
+Sample `/etc/rsyncd.scrt`:
+
+    username:password
+
+Sample `/etc/default/rsync`:
+    
+    RSYNC_ENABLE=true
+    RSYNC_NICE=’10′
+    RSYNC_IONICE=’-c3′
+
+Finally, start `rsync` service.
+
+    sudo service rsync start
