@@ -10,7 +10,7 @@ A custom collate post helper.
 
   {% if forloop.first %}
     <h2>{{this_year}}</h2>
-    <strong>{{next_month}} &raquo;</strong>
+    <strong>{{this_month}} &raquo;</strong>
     <ul>
   {% endif %}
 
