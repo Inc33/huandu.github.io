@@ -2,8 +2,8 @@
 layout: post
 title: "Puppet programming tips"
 description: ""
-category: ""
-tags: []
+category: "technical"
+tags: [puppet, ruby, performance, tip]
 ---
 {% include JB/setup %}
 
