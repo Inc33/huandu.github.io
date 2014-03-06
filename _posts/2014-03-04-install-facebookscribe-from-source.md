@@ -15,7 +15,7 @@ Here we go.
 
 ### Step 1: Install pre-required packages. ###
 
-    apt-get install libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev python-dev
+    apt-get install libboost-dev libboost-test-dev libboost-program-options-dev libboost-system-dev libboost-filesystem-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev python-dev
 
 ### Step 2: Install latest `thrift`. ###
 
