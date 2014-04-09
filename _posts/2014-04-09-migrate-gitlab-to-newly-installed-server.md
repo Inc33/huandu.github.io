@@ -63,3 +63,7 @@ I checked all Gitlab logs under its `log/` directory. I found there were lots of
 Why nearly all requests cannot finish in 30s? After some investigations, I found Gitlab was trying to build event list for Dashboard page. It iterated all commits in every git repositorie. It could take several minutes to finish it.
 
 I changed the `timeout` setting in `config/unicorn.rb` from `30` to `120`. Once Gitlab succeeded building list, the list was cached for future use. No more expensive operation after that.
+
+### Link `gitlab-shell/lib` in every repository ###
+
+Gitlab creates a soft link to `/home/git/gitlab-shell/lib` in every repository. Without this link, all Gitlab managed repository cannot be updated as the `update` hook requires files in the linked directory.
