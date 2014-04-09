@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Answers for "alert(1) to win" quiz"
+title: 'Answers for "alert(1) to win" quiz'
 description: ""
 category: "technical"
 tags: [quiz, alert to win, javascript]
