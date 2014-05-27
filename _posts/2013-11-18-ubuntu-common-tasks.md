@@ -125,3 +125,13 @@ Sample `/etc/default/rsync`:
 Finally, start `rsync` service.
 
     sudo service rsync start
+
+### List installed packages ###
+
+Use `dpkg -l` to show all installed packages.
+
+### Fully remove a package ###
+
+`apt-get remove` only removes package content. If this package contains some generated configuration files, `apt-get remove` won't work as expected.
+
+Use `apt-get purge` to remove everything in a package.
