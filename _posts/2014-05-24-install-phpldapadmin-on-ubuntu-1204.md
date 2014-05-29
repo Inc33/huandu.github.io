@@ -38,5 +38,8 @@ Resolved this issue by modifying following line in phpldapadmin `/etc/phpldapadm
 	// modify it to a correct value.
 	$servers->setValue('server','base',array('dc=example,dc=com'));
 
+### Unable to use `memberOf` query ###
 
-To be continued...
+Unfortunately, I still cannot get the `memberOf` query work with some LDAP client, e.g. redmine. It does work with `ldapsearch` command.
+
+It seems to be a `slapd` issue per [this thread](http://osdir.com/ml/ldap.phpldapadmin.user/2008-07/msg00002.html). And there is a fix mentioned in the thread. However, patch link is broken and I cannot find related code anywhere in phpldapadmin code base.
