@@ -11,7 +11,7 @@ There is [an official guide](http://www.redmine.org/projects/redmine/wiki/Redmin
 
 After a few investigation, I find the root cause is that `Login attribute` field in `Attributes` section should be `cn` instead of `sAMAccountName`. Maybe `sAMAccountName` is only valid for Microsoft Active Directory.
 
-And another triffle difference is that `memberOf` query doesn't work in `slapd`. I have to use `gidNumber`, which is not readable at all.
+And another trifle difference is that `memberOf` query doesn't work in `slapd`. I have to use `gidNumber`, which is not readable at all.
 
 Following is my configuration working with `slapd` on a Ubuntu 12.04 box.
 
@@ -27,11 +27,11 @@ Following is my configuration working with `slapd` on a Ubuntu 12.04 box.
 	
 	Attributes
 		Login attribute:     cn
-		Firstname attribute: givenName
-		Lastname attribute:  sn
+		First name attribute: givenName
+		Last name attribute:  sn
 		Email attribute:     mail
 
 Some notes:
 
 * `ou=users` part may need to be changed. I write it because I put all redmine users under the `ou=users` directory.
-* `gidNumber=501` part means all users in a groud which gid is 501 are valid for redmine. As I cannot make `memberOf` query work with `slapd`, I use gid number directly as a workaround.
+* `gidNumber=501` part means all users in a group which gid is 501 are valid for redmine. As I cannot make `memberOf` query work with `slapd`, I use gid number directly as a workaround.
