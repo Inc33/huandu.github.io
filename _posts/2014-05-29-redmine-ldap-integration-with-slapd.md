@@ -26,12 +26,13 @@ Following is my configuration working with `slapd` on a Ubuntu 12.04 box.
 	On-the-fly user creation: yes
 	
 	Attributes
-		Login attribute:     cn
+		Login attribute:      cn
 		First name attribute: givenName
 		Last name attribute:  sn
-		Email attribute:     mail
+		Email attribute:      mail
 
 Some notes:
 
+* `cn` must be a valid redmine username, which cannot contain any space. So use `cn=huandu` instead of `cn=Huan Du`.
 * `ou=users` part may need to be changed. I write it because I put all redmine users under the `ou=users` directory.
 * `gidNumber=501` part means all users in a group which gid is 501 are valid for redmine. As I cannot make `memberOf` query work with `slapd`, I use gid number directly as a workaround.
