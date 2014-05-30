@@ -3,7 +3,7 @@ layout: post
 title: "Install phpldapadmin on Ubuntu 12.04"
 description: ""
 category: "software"
-tags: [ubuntu, phpldapadmin, ldap, trouble shooting]
+tags: [ubuntu, phpldapadmin, ldap, trouble shooting, slapd, memberOf]
 ---
 {% include JB/setup %}
 
