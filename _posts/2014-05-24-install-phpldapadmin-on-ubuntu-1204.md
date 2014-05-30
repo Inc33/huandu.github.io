@@ -40,6 +40,71 @@ Resolved this issue by modifying following line in phpldapadmin `/etc/phpldapadm
 
 ### Unable to use `memberOf` query ###
 
-Unfortunately, I still cannot get the `memberOf` query work with some LDAP client, e.g. redmine. It does work with `ldapsearch` command.
+`slapd` doesn't provide `memberOf` query by default. I need to enable it manually.
 
-It seems to be a `slapd` issue per [this thread](http://osdir.com/ml/ldap.phpldapadmin.user/2008-07/msg00002.html). And there is a fix mentioned in the thread. However, patch link is broken and I cannot find related code anywhere in phpldapadmin code base.
+I found a blog post about [how to setup `memberOf` overlay](http://www.schenkels.nl/2013/03/how-to-setup-openldap-with-memberof-overlay-ubuntu-12-04/). It works on my Ubuntu box.
+
+We need following two files to enable `memberOf`.
+
+First file `member.ldif`:
+
+	# member.ldif
+	dn: cn=module,cn=config
+	cn: module
+	objectclass: olcModuleList
+	objectclass: top
+	olcmoduleload: memberof.la
+	olcmodulepath: /usr/lib/ldap
+	
+	dn: olcOverlay={0}memberof,olcDatabase={1}hdb,cn=config
+	objectClass: olcConfig
+	objectClass: olcMemberOf
+	objectClass: olcOverlayConfig
+	objectClass: top
+	olcOverlay: memberof
+
+And second file `refint.ldif`:
+
+	# refint.ldif
+	dn: cn=module,cn=config
+	cn: module
+	objectclass: olcModuleList
+	objectclass: top
+	olcmoduleload: refint.la
+	olcmodulepath: /usr/lib/ldap
+	
+	dn: olcOverlay={1}refint,olcDatabase={1}hdb,cn=config
+	objectClass: olcConfig
+	objectClass: olcOverlayConfig
+	objectClass: olcRefintConfig
+	objectClass: top
+	olcOverlay: {1}refint
+	olcRefintAttribute: memberof member manager owner
+
+After created two files, execute following command on LDAP server.
+
+	ldapadd -Y EXTERNAL -H ldapi:/// -f member.ldif
+	ldapadd -Y EXTERNAL -H ldapi:/// -f refint.ldif
+
+If everything goes well, we should get following output.
+
+	root@ldap:~# ldapadd -Y EXTERNAL -H ldapi:/// -f member.ldif
+	SASL/EXTERNAL authentication started
+	SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+	SASL SSF: 0
+	adding new entry "cn=module,cn=config"
+	
+	adding new entry "olcOverlay={0}memberof,olcDatabase={1}hdb,cn=config"
+	
+	root@ldap:~# ldapadd -Y EXTERNAL -H ldapi:/// -f refint.ldif
+	SASL/EXTERNAL authentication started
+	SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+	SASL SSF: 0
+	adding new entry "cn=module,cn=config"
+	
+	adding new entry "olcOverlay={1}refint,olcDatabase={1}hdb,cn=config"
+
+Some important notes:
+
+* `memberOf` query only works with User Group (the `groupOfNames`).
+* If there is any User Group created before doing `memberOf` setup, the `member` attribute of such User Groups should be updated to make `memberOf` work.
