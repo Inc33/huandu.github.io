@@ -1,0 +1,335 @@
+---
+layout: slide
+title: 积土成山——复杂软件项目的发展历程
+description: ""
+category: "slide"
+tags: [chinese, sharing, software engineering, dian]
+css_file: dian-talk-2014.css
+script_file: dian-talk-2014.js
+---
+{% include JB/setup %}
+
+<div id="title" class="step" data-z="1400" data-scale="1.5">
+  <h1>积土成山</h1>
+  <h2>复杂软件项目的发展历程</h2>
+  <div class="author">杜欢，Dian 团队 045</div>
+  <a class="mail" href="mailto:i@huandu.me">i@huandu.me</a>
+</div>
+
+<div id="menu" class="step" data-y="400" data-z="1400" data-scale="1.3" data-rotate-x="-15">
+  <ul>
+    <li>计划</li>
+    <li>构思</li>
+    <li>原型</li>
+    <li>开发</li>
+  </ul>
+</div>
+
+<div id="menu-planning" class="step menu" data-y="2388.5125" data-rotate-x="-90">
+  <div class="stars">
+    <div class="left-star">*</div>
+    <div class="right-star">*</div>
+  </div>
+  <ul>
+    <li>计划</li>
+    <li>构思</li>
+    <li>原型</li>
+    <li>开发</li>
+  </ul>
+</div>
+
+<div id="planning" class="step deck" data-x="1194.2562" data-y="2068.5125" data-rotate-x="-90" data-rotate-y="30">
+  <ul class="method">
+    <li>需求分析</li>
+    <li>竞品分析</li>
+    <li>技术调研</li>
+  </ul>
+
+  <ul class="ideas">
+    <li>卡牌</li>
+    <li>2D</li>
+    <li>复杂的界面</li>
+    <li>跨平台</li>
+    <li>高性能</li>
+    <li>可自动更新</li>
+    <li>cocos2d-x</li>
+    <li>PhoneGap</li>
+  </ul>
+</div>
+
+<div id="planning-essay" class="step deck" data-x="2068.5125" data-y="1194.2562" data-rotate-x="-90" data-rotate-y="60">
+  <h1>取其精华</h1>
+</div>
+
+<div id="menu-sketching" class="step menu" data-x="2388.5125" data-rotate-x="-90" data-rotate-x="-90" data-rotate-y="90">
+  <div class="stars">
+    <div class="left-star">*</div>
+    <div class="right-star">*</div>
+  </div>
+  <ul>
+    <li>计划</li>
+    <li>构思</li>
+    <li>原型</li>
+    <li>开发</li>
+  </ul>
+</div>
+
+<div id="sketching" class="step deck" data-x="2068.5125" data-y="-1194.2563" data-rotate-x="-90" data-rotate-y="120">
+  <h1>点到线，线到面</h1>
+
+  <!-- borrowed from http://desandro.github.io/3dtransforms/docs/cube.html -->
+  <section class="container">
+    <div class="cube">
+      <figure class="front"></figure>
+      <figure class="back"></figure>
+      <figure class="right"></figure>
+      <figure class="left"></figure>
+      <figure class="top"></figure>
+      <figure class="bottom"></figure>
+    </div>
+    <ul class="dots">
+      <li>&nbsp;</li>
+      <li>&nbsp;</li>
+      <li>&nbsp;</li>
+      <li>&nbsp;</li>
+    </ul>
+  </section>
+</div>
+
+<div id="sketching-essay" class="step deck" data-x="1194.2563" data-y="-2068.5125" data-rotate-x="-90" data-rotate-y="150">
+  <h1>
+    <div>Think First</div>
+    <div>Code Later</div>
+  </h1>
+</div>
+
+<div id="menu-prototyping" class="step menu" data-y="-2388.5125" data-rotate-x="-90" data-rotate-y="180">
+  <div class="stars">
+    <div class="left-star">*</div>
+    <div class="right-star">*</div>
+  </div>
+  <ul>
+    <li>计划</li>
+    <li>构思</li>
+    <li>原型</li>
+    <li>开发</li>
+  </ul>
+</div>
+
+<div id="prototyping" class="step deck" data-x="-1194.2563" data-y="-2068.5125" data-rotate-x="-90" data-rotate-y="210">
+  <h1>疯狂编码</h1>
+
+  <div class="code-snippet">
+{% highlight cpp %}
+JSObject * ShanaUI::createSekai() {
+  JSObject *sekaiObj = JS_NewObject(jsContext(), &_sekaiClass, _sekaiPrototype, NULL);
+  SHANA_ASSERT(sekaiObj, "cannot create sekai object.");
+  JS_SetReservedSlot(sekaiObj, 0, JSVAL_VOID);
+  JS_SetReservedSlot(sekaiObj, 1, JSVAL_ZERO);
+  return sekaiObj;
+}
+{% endhighlight %}
+
+{% highlight cpp %}
+public:
+  static ShanaUIPtr create(const ::std::string &name = DEFAULT_NAME);
+
+  // get ShanaUI instance from JSContext private data.
+  static ShanaUI * parse(JSContext *cx);
+
+  // TODO: speed should be a ShanaUI instance method.
+  // it's static now due to the fact that SActionManager is not
+  // managed by ShanaUI. related logic should be refactoried.
+  static void speed(float value);
+  static float speed();
+
+  #pragma mark -
+  #pragma mark switchies
+  public:
+  // start ShanaUI with a starter.
+  void start(Starter starter);
+
+  // start ShanaUI with a index file. index file can be a script
+  // or view.
+  void start(const ::std::string &index);
+
+  inline void start(const char *index) {
+    start(::std::string(index));
+  }
+{% endhighlight %}
+
+{% highlight javascript %}
+/**
+* make paramsChecker to a handler function.
+* @param paramsChecker
+*/
+Api.makeChecker = function(paramsChecker) {
+  if (paramsChecker instanceof CheckerChain) {
+    return paramsChecker;
+  }
+
+  var checker = _defaultChecker.object(paramsChecker);
+
+  return function() {
+    var self = this,
+    params = self.req().params;
+
+    if (checker(params) !== true) {
+      self.status(status.INVALID_PARAMS, checker.error());
+    }
+  };
+};
+
+function ApiHandler() {}
+ApiHandler.prototype = {
+  pause: function() {
+    this._dontCallNext = true;
+  },
+
+  resume: function() {
+    this._dontCallNext = false;
+  },
+
+  /**
+  * wrap a handler to make sure top level next function
+  * will always be called after handler returns.
+  * @param {Function} handler
+  */
+  next: function(handler) {
+{% endhighlight %}
+
+{% highlight cpp %}
+SHANA_INITIALIZE {
+  auto jsClass = SJSClass::create<SDragEvent>();
+  jsClass->registerClass();
+
+  // properties...
+  SHANA_JS_CLASS_PROTOTYPE_PROPERTY(jsClass, "dragType", SDragEvent, dragType);
+
+  // constants...
+  SHANA_JS_CLASS_STATIC_CONSTANT(jsClass, "DRAG_START", SDragEvent::DragEventType, SDragEvent::DRAG_START);
+  SHANA_JS_CLASS_STATIC_CONSTANT(jsClass, "DRAG_END", SDragEvent::DragEventType, SDragEvent::DRAG_END);
+}
+{% endhighlight %}
+
+{% highlight javascript %}
+// return a function can be used by WolfClient directly.
+var makeCallback = function(api, cb, scope) {
+  var startTime = Date.now();
+
+  return ui.makeFunction(function(data, status) {
+    Heartbeat.reset();
+
+    // track all api calls as event.
+    if (!scope._noStats) {
+      Tracker.trackTiming("api", Date.now() - startTime, api, "status:" + status);
+      Tracker.trackEvent("api", api, "status:" + status);
+    }
+
+    if (cb) {
+      cb.call(scope, data, status);
+    }
+  });
+};
+{% endhighlight %}
+  </div>
+</div>
+
+<div id="prototyping-essay" class="step deck" data-x="-2068.5125" data-y="-1194.2563" data-rotate-x="-90" data-rotate-y="240">
+  <h1>抓住闪光点</h1>
+
+  <section class="detail">
+{% highlight cpp %}
+// C++ 代码
+node->on("tap", [this] (STapEventPtr e) {
+  // 事件处理
+});
+{% endhighlight %}
+
+{% highlight javascript %}
+// Javascript 代码
+node.on("tap", function(e) {
+  // 事件处理
+});
+{% endhighlight %}
+
+    <div class="clearfix"></div>
+    <h2>业务和框架在实现时都不需要关心语言差异<br/>做得到么？</h2>
+  </section>
+</div>
+
+<div id="menu-developing" class="step menu" data-x="-2388.5125" data-rotate-x="-90" data-rotate-y="270">
+  <div class="stars">
+    <div class="left-star">*</div>
+    <div class="right-star">*</div>
+  </div>
+  <ul>
+    <li>计划</li>
+    <li>构思</li>
+    <li>原型</li>
+    <li>开发</li>
+  </ul>
+</div>
+
+<div id="developing" class="step deck" data-x="-2068.5125" data-y="1194.2563" data-rotate-x="-90" data-rotate-y="300">
+  <h1>速度与质量的结合</h1>
+
+  <ul>
+    <li>统一代码规范</li>
+    <li>业务和框架双重标准</li>
+    <li>用代码规范代码</li>
+  </ul>
+</div>
+
+<div id="developing-essay" class="step deck" data-x="-1194.2563" data-y="2068.5125" data-rotate-x="-90" data-rotate-y="330">
+  <h1>勇于重构</h1>
+
+  <ul>
+    <li>代码重复</li>
+    <li>难以扩展</li>
+    <li>依赖繁杂</li>
+    <li>性能瓶颈</li>
+    <li>反 SOLID 原则</li>
+  </ul>
+</div>
+
+<div id="thank-you" class="step" data-y="-800" data-z="1400" data-scale="1.3" data-rotate-x="15">
+  <ul class="poem">
+    <li>积土成山</li>
+    <li>风雨兴焉</li>
+    <li>积水成渊</li>
+    <li>蛟龙生焉</li>
+    <li>积善成德</li>
+    <li>而神明自得</li>
+    <li>圣心备焉</li>
+    <li>故不积跬步</li>
+    <li>无以至千里</li>
+    <li>不积小流</li>
+    <li>无以成江海</li>
+    <li>骐骥一跃</li>
+    <li>不能十步</li>
+    <li>驽马十驾</li>
+    <li>功在不舍</li>
+    <li class="thanks">感谢聆听！</li>
+    <li>锲而舍之</li>
+    <li>朽木不折</li>
+    <li>锲而不舍</li>
+    <li>金石可镂</li>
+    <li>蚓无爪牙之利</li>
+    <li>筋骨之强</li>
+    <li>上食埃土</li>
+    <li>下饮黄泉</li>
+    <li>用心一也</li>
+    <li>蟹六跪而二螯</li>
+    <li>非蛇蟮之穴无可寄托者</li>
+    <li>用心躁也</li>
+    <li>故无冥冥之志者</li>
+    <li>无昭昭之明</li>
+    <li>无昏昏之事者</li>
+    <li>无赫赫之功</li>
+  </ul>
+</div>
+
+<script>
+document.body.style.zoom = Math.min(screen.width, screen.height) / 800;
+</script>
