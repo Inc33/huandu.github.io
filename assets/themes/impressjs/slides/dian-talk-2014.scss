@@ -1,0 +1,919 @@
+$screen-width: 1280px;
+$screen-height: 800px;
+$slide-step-scale: 0.6;
+$slide-step-width: $screen-width * $slide-step-scale;
+$slide-step-height: $screen-height * $slide-step-scale;
+
+$body-background-from-color: #f0f0f0;
+$body-background-to-color: #bebebe;
+$shadow-box-background-color: fade-out(white, 0.3);
+$past-menu-background-color: darken($shadow-box-background-color, 30%);
+
+$font-size-base: 36px;
+$font-size-h1: $font-size-base * 2;
+$font-size-h2: $font-size-base * 1.6;
+
+$shadow-color: fade-out(black, 0.6);
+$menu-text-color: black;
+$menu-text-fade-color: fade-out(black, 0.6);
+
+$cube-size: 120px;
+$cube-border: 8px;
+$cube-border-color: #666;
+$cube-edge: $cube-size - $cube-border * 2;
+$cube-perspective-z: $cube-size / 2;
+$cube-face-color: rgba(225, 225, 225, 0.9);
+
+$cube-front-color:  hsla(   0, 100%, 85%, 0.4 );
+$cube-back-color:   hsla(  60, 100%, 85%, 0.4 );
+$cube-right-color:  hsla( 120, 100%, 85%, 0.4 );
+$cube-left-color:   hsla( 180, 100%, 85%, 0.4 );
+$cube-top-color:    hsla( 240, 100%, 85%, 0.4 );
+$cube-bottom-color: hsla( 300, 100%, 85%, 0.4 );
+
+$dot-size: $cube-border - 1px;
+$dot-background-color: $cube-border-color;
+
+$PI: 3.1415926536;
+
+// reset tag styles.
+h1 {
+  color: black;
+  font-weight: bold;
+  font-size: $font-size-h1;
+  text-shadow: 5px 5px 8px $shadow-color;
+}
+
+h2 {
+  font-size: $font-size-h2;
+}
+
+.clearfix {
+  clear: both;
+}
+
+// page theme
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Georgia", "Xin Gothic", "Hiragino Sans GB", "Droid Sans Fallback", "Microsoft YaHei", "SimSun", sans-serif;
+}
+
+// body style.
+body {
+  background:                     mix( $body-background-from-color, $body-background-to-color );
+  background:        -webkit-gradient( radial, 50% 50%, 0, 50% 50%, 500, from($body-background-from-color), to($body-background-to-color) );
+  background: -webkit-radial-gradient( $body-background-from-color, $body-background-to-color );
+  background:    -moz-radial-gradient( $body-background-from-color, $body-background-to-color );
+  background:     -ms-radial-gradient( $body-background-from-color, $body-background-to-color );
+  background:      -o-radial-gradient( $body-background-from-color, $body-background-to-color );
+  background:         radial-gradient( $body-background-from-color, $body-background-to-color );
+
+  font-family: "Georgia", "Xin Gothic", "Hiragino Sans GB", "Droid Sans Fallback", "Microsoft YaHei", sans-serif;
+}
+
+// helpers to save my time.
+@mixin transform($arguments...) {
+  -webkit-transform: $arguments;
+     -moz-transform: $arguments;
+      -ms-transform: $arguments;
+       -o-transform: $arguments;
+          transform: $arguments;
+}
+
+@mixin transition($arguments...) {
+  -webkit-transition: $arguments;
+     -moz-transition: $arguments;
+      -ms-transition: $arguments;
+       -o-transition: $arguments;
+          transition: $arguments;
+}
+
+@mixin perspective($arguments...) {
+  -webkit-perspective: $arguments;
+     -moz-perspective: $arguments;
+       -o-perspective: $arguments;
+          perspective: $arguments;
+}
+
+@mixin transform-style($arguments...) {
+  -webkit-transform-style: $arguments;
+     -moz-transform-style: $arguments;
+       -o-transform-style: $arguments;
+          transform-style: $arguments;
+}
+
+@mixin transform-origin($arguments...) {
+  -webkit-transform-origin: $arguments;
+  -moz-transform-origin: $arguments;
+  -o-transform-origin: $arguments;
+  transform-origin: $arguments;
+}
+
+@mixin backface-visibility($arguments...) {
+  -webkit-backface-visibility: $arguments;
+     -moz-backface-visibility: $arguments;
+       -o-backface-visibility: $arguments;
+          backface-visibility: $arguments;
+}
+
+@mixin box-sizing($arguments...) {
+  -webkit-box-sizing: $arguments;
+     -moz-box-sizing: $arguments;
+      -ms-box-sizing: $arguments;
+       -o-box-sizing: $arguments;
+          box-sizing: $arguments;
+}
+
+// keyframes and animation helpers.
+// inspired by http://joshbroton.com/quick-fix-sass-mixins-for-css-keyframe-animations/
+@mixin animation($animate...) {
+  $max: length($animate);
+
+  @if $max > 0 {
+    $-webkit-animations: '-webkit-';
+       $-moz-animations: '-moz-';
+         $-o-animations: '-o-';
+            $animations: '';
+
+    @for $i from 1 through $max {
+      $-webkit-animations: #{$-webkit-animations + nth($animate, $i)};
+         $-moz-animations: #{$-moz-animations + nth($animate, $i)};
+           $-o-animations: #{$-o-animations + nth($animate, $i)};
+              $animations: #{$animations + nth($animate, $i)};
+
+      @if $i < $max {
+        $-webkit-animations: #{$-webkit-animations + ", -webkit-"};
+           $-moz-animations: #{$-moz-animations + ", -moz-"};
+             $-o-animations: #{$-o-animations + ", -o-"};
+                $animations: #{$animations + ", "};
+      }
+    }
+
+    -webkit-animation: $-webkit-animations;
+       -moz-animation: $-moz-animations;
+         -o-animation: $-o-animations;
+            animation: $animations;
+  }
+}
+
+@mixin keyframes($animationName) {
+  @-webkit-keyframes #{"-webkit-" + $animationName} {
+    @content;
+  }
+  @-moz-keyframes #{"-moz-" + $animationName} {
+    @content;
+  }
+  @-o-keyframes #{"-o-" + $animationName} {
+    @content;
+  }
+  @keyframes #{$animationName} {
+    @content;
+  }
+}
+
+// custom mixins.
+@mixin shadow-box {
+  background: $shadow-box-background-color;
+  border: 4px solid fade-out(black, 0.7);
+  box-shadow: 0 5px 10px $shadow-color;
+}
+
+// default styles for all steps.
+.step {
+  font-size: $font-size-base;
+  width: $slide-step-width;
+  height: $slide-step-height;
+  padding: 40px;
+
+  .impress-enabled & {
+    opacity: 0.3;
+  }
+}
+
+// slide with borders.
+.deck {
+  @include shadow-box;
+  border-radius: $font-size-base;
+}
+
+// slide `title`.
+#title {
+  opacity: 0.5;
+  text-align: center;
+
+  h1 {
+    font-size: $font-size-h1 * 2;
+    opacity: 0;
+    margin-top: 40px;
+  }
+
+  h2 {
+    margin: 40px 0 80px 0;
+  }
+
+  .author, .mail {
+    opacity: 0;
+    color: lighten(black, 40%);
+    margin: 10px;
+  }
+
+  .mail {
+    text-decoration: underline;
+  }
+
+  &.present {
+    opacity: 1;
+
+    h1, .author, .mail {
+      opacity: 1;
+    }
+  }
+}
+
+// slide `menu`.
+#menu {
+  opacity: 0;
+  @include transition('opacity 1.5s');
+
+  display: table;
+  width: 240px;
+
+  ul {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    height: 100%;
+
+    li {
+      @include shadow-box;
+
+      border-radius: 0;
+      padding: 20px;
+    }
+
+    li:nth-child(-n + 3) {
+      border-bottom: none;
+    }
+
+    li:first-child {
+      border-radius: $font-size-base/2 $font-size-base/2 0 0;
+    }
+
+    li:last-child {
+      border-radius: 0 0 $font-size-base/2 $font-size-base/2;
+    }
+  }
+
+  &.present {
+    opacity: 1;
+  }
+}
+
+// common menu class.
+.menu {
+  opacity: 0;
+  @include transition('opacity 1.5s');
+
+  display: table;
+  width: 240px;
+
+  ul {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    height: 100%;
+
+    li {
+      @include shadow-box;
+
+      border-radius: 0;
+      padding: 20px;
+      color: $menu-text-color;
+    }
+
+    li:nth-child(-n + 3) {
+      border-bottom: none;
+    }
+
+    li:first-child {
+      border-radius: $font-size-base/2 $font-size-base/2 0 0;
+    }
+
+    li:last-child {
+      border-radius: 0 0 $font-size-base/2 $font-size-base/2;
+    }
+  }
+
+  .left-star, .right-star {
+    opacity: 0;
+  }
+
+  &.present, &.past {
+    opacity: 1;
+
+    .left-star, .right-star {
+      opacity: 1;
+    }
+  }
+}
+
+// slide `menu-planning`.
+#menu-planning {
+  &.present, &.past {
+    .left-star {
+      left: -24px;
+      top: 86px;
+      @include animation('rotate-star 1s linear infinite');
+    }
+
+    .right-star {
+      left: 210px;
+      top: 86px;
+      @include animation('rotate-star 1s linear infinite reverse');
+    }
+  }
+}
+
+// slide `planning`.
+#planning {
+  position: relative;
+
+  .method {
+    text-align: center;
+    font-size: $font-size-base * 1.5;
+    margin-top: 80px;
+
+    li {
+      padding: 10px;
+    }
+  }
+
+  .ideas {
+    position: absolute;
+    opacity: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    @include transform( translateZ(100px) );
+    @include transform-style(preserve-3d);
+
+    li {
+      position: absolute;
+      text-shadow: 5px 5px 8px $shadow-color;
+    }
+
+    li:nth-child(1) {
+      left: 540px;
+      top: 220px;
+      @include transform( rotate(-3deg) );
+    }
+
+    li:nth-child(2) {
+      font-size: $font-size-base * 1.8;
+      left: 150px;
+      top: 100px;
+    }
+
+    li:nth-child(3) {
+      font-size: $font-size-base * 1.2;
+      left: 120px;
+      top: 350px;
+    }
+
+    li:nth-child(4) {
+      font-size: $font-size-base;
+      left: 100px;
+      top: 200px;
+      @include transform( rotate(-15deg) );
+    }
+
+    li:nth-child(5) {
+      font-size: $font-size-base * 1.3;
+      left: 550px;
+      top: 120px;
+    }
+
+    li:nth-child(6) {
+      font-size: $font-size-base * 0.9;
+      left: 520px;
+      top: 380px;
+      @include transform( rotate(10deg) );
+    }
+
+    li:nth-child(7) {
+      font-size: $font-size-base;
+      left: 60px;
+      top: 260px;
+      @include transform( rotate(8deg) );
+    }
+
+    li:nth-child(8) {
+      font-size: $font-size-base * 0.8;
+      left: 510px;
+      top: 310px;
+    }
+  }
+
+  &.present {
+    .ideas {
+      @include animation('planning-fade-in-out 6s ease-in-out infinite');
+
+      li:nth-child(1) {
+        @include animation('planning-zoom-ideas 2s infinite');
+      }
+
+      li:nth-child(2) {
+        @include animation('planning-rotate-y 2.5s infinite');
+      }
+
+      li:nth-child(7) {
+        @include animation('planning-rotate 1.5s infinite');
+      }
+    }
+  }
+}
+
+@include keyframes(planning-zoom-ideas) {
+    0% { @include transform( rotate(-3deg) scale(1) ); }
+   10% { @include transform( rotate(-3deg) scale(1.3) ); }
+   25% { @include transform( rotate(-3deg) scale(0.9) ); }
+   35% { @include transform( rotate(-3deg) scale(1.3) ); }
+   50% { @include transform( rotate(-3deg) scale(0.9) ); }
+   60% { @include transform( rotate(-3deg) scale(1) ); }
+  100% { @include transform( rotate(-3deg) scale(1) ); }
+}
+
+@include keyframes(planning-rotate-y) {
+    0% { @include transform( rotateY(0deg) ); }
+   20% { @include transform( rotateY(45deg) ); }
+   30% { @include transform( rotateY(45deg) ); }
+   70% { @include transform( rotateY(-45deg) ); }
+   80% { @include transform( rotateY(-45deg) ); }
+  100% { @include transform( rotateY(0deg) ); }
+}
+
+@include keyframes(planning-rotate) {
+    0% { @include transform( rotate(8deg) ); }
+   10% { @include transform( rotate(12deg) ); }
+   30% { @include transform( rotate(4deg) ); }
+   70% { @include transform( rotate(4deg) ); }
+   90% { @include transform( rotate(12deg) ); }
+  100% { @include transform( rotate(8deg) ); }
+}
+
+@include keyframes(planning-fade-in-out) {
+    0% { opacity: 0; }
+   50% {opacity: 0.35; }
+  100% {opacity: 0; }
+}
+
+// slide `planning-essay`.
+#planning-essay {
+  display: table;
+  width: 420px;
+  height: 420px;
+  border-radius: 210px;
+
+  h1 {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+// slide `menu-sketching`.
+#menu-sketching {
+  &.present, &.past {
+    li:first-child {
+      color: $menu-text-fade-color;
+      background-color: $past-menu-background-color;
+      @include animation('gray-out-menu-item 2s');
+    }
+
+    .left-star {
+      left: -24px;
+      top: 166px;
+      @include animation('move-down-star 2s', 'rotate-star 1s linear infinite');
+    }
+
+    .right-star {
+      left: 210px;
+      top: 166px;
+      @include animation('move-down-star 2s', 'rotate-star 1s linear infinite reverse');
+    }
+  }
+}
+
+// slide `sketching`.
+#sketching {
+  h1 {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .dots {
+    opacity: 0;
+
+    li {
+      position: absolute;
+      font-size: 1px;
+      padding: 0;
+      width: $dot-size;
+      height: $dot-size;
+      background-color: $dot-background-color;
+      border: none;
+    }
+
+    li:nth-child(1) {
+      left: 0;
+      top: 0;
+    }
+
+    li:nth-child(2) {
+      left: $cube-edge + $cube-border;
+      top: 0;
+    }
+
+    li:nth-child(3) {
+      left: $cube-edge + $cube-border;
+      top: $cube-edge + $cube-border;
+    }
+
+    li:nth-child(4) {
+      left: 0;
+      top: $cube-edge + $cube-border;
+    }
+  }
+
+  .container {
+    display: none;
+    width: $cube-size;
+    height: $cube-size;
+    position: relative;
+    left: 280px;
+    top: 100px;
+    @include transform( translateZ($cube-size*2) );
+  }
+
+  .cube {
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    @include transform-style(preserve-3d);
+    @include transform( translateZ(-$cube-size*0.5) );
+
+    figure {
+      display: block;
+      position: absolute;
+      width: $cube-edge;
+      height: $cube-edge;
+      border: $cube-border solid $cube-border-color;
+    }
+
+    .front  { background: $cube-front-color;  }
+    .back   { background: $cube-back-color;   }
+    .right  { background: $cube-right-color;  }
+    .left   { background: $cube-left-color;   }
+    .top    { background: $cube-top-color;    }
+    .bottom { background: $cube-bottom-color; }
+  }
+
+  &.present, &.past {
+    .container {
+      display: block;
+    }
+
+    .dots {
+      @include animation('show-dots 10s');
+
+      li:nth-child(1) {
+        @include animation('scale-dot 1s 4s');
+      }
+
+      li:nth-child(2) {
+        @include animation('scale-dot 1s 5.2s');
+      }
+
+      li:nth-child(3) {
+        @include animation('scale-dot 1s 4.4s');
+      }
+
+      li:nth-child(4) {
+        @include animation('scale-dot 1s 4.8s');
+      }
+    }
+
+    .cube {
+      opacity: 1;
+      @include animation('rotate-cube 5s linear 10s infinite', 'show-cube 10s');
+
+      .front  { @include transform(                    translateZ( $cube-size/2 ) ); }
+      .back   { @include transform( rotateX( -180deg ) translateZ( $cube-size/2 ) ); }
+      .right  { @include transform( rotateY( 90deg )   translateZ( $cube-size/2 ) ); }
+      .left   { @include transform( rotateY( -90deg )  translateZ( $cube-size/2 ) ); }
+      .top    { @include transform( rotateX( 90deg )   translateZ( $cube-size/2 ) ); }
+      .bottom { @include transform( rotateX( -90deg )  translateZ( $cube-size/2 ) ); }
+
+      .front, .back, .right, .left, .top, .bottom {
+        @include transition('transform 5s');
+      }
+    }
+  }
+}
+
+@include keyframes(scale-dot) {
+    0% { @include transform( scale(0) ); }
+   30% { @include transform( scale(2.5) ); }
+  100% { @include transform( scale(1) ); }
+}
+
+@include keyframes(show-dots) {
+    0% { opacity: 0; }
+   30% { opacity: 1; }
+   70% { opacity: 1; }
+   90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@include keyframes(show-cube) {
+    0% { opacity: 0; }
+   80% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@include keyframes(rotate-cube) {
+    0% { @include transform( translateZ( -$cube-size*0.5 ) rotateX(   0deg ) rotateY(   0deg ) ); }
+  100% { @include transform( translateZ( -$cube-size*0.5 ) rotateX( 360deg ) rotateY( 360deg ) ); }
+}
+
+// slide `sketching-essay`.
+#sketching-essay {
+  display: table;
+  width: 420px;
+  height: 420px;
+  border-radius: 210px;
+
+  h1 {
+    display: table-cell;
+    font-size: $font-size-h1 * 0.7;
+    text-align: center;
+    vertical-align: middle;
+
+    div {
+      margin: 20px;
+    }
+  }
+}
+
+// slide `menu-prototyping`.
+#menu-prototyping {
+  li:nth-child(-n + 1) {
+    color: $menu-text-fade-color;
+    background-color: $past-menu-background-color;
+  }
+
+  &.present, &.past {
+    li:nth-child(2) {
+      color: $menu-text-fade-color;
+      background-color: $past-menu-background-color;
+      @include animation('gray-out-menu-item 2s');
+    }
+
+    .left-star {
+      left: -24px;
+      top: 246px;
+      @include animation('move-down-star 2s', 'rotate-star 1s linear infinite');
+    }
+
+    .right-star {
+      left: 210px;
+      top: 246px;
+      @include animation('move-down-star 2s', 'rotate-star 1s linear infinite reverse');
+    }
+  }
+}
+
+// slide `prototyping`.
+#prototyping {
+  h1 {
+    margin-top: 140px;
+    text-align: center;
+  }
+
+  .code-snippet {
+    opacity: 0;
+  }
+
+  .highlight {
+    font-size: 8px;
+    position: absolute;
+    background-color: transparent;
+
+    pre {
+      word-break: break-all;
+      word-wrap: break-word;
+    }
+
+    &:nth-child(1) {
+      width: 400px;
+      left: 400px;
+      top: 20px;
+    }
+
+    &:nth-child(2) {
+      width: 190px;
+      left: 20px;
+      top: 160px;
+    }
+
+    &:nth-child(3) {
+      width: 190px;
+      left: 550px;
+      top: 100px;
+    }
+
+    &:nth-child(4) {
+      left: 20px;
+      top: 50px;
+    }
+
+    &:nth-child(5) {
+      left: 240px;
+      top: 300px;
+    }
+  }
+
+  &.present, &.past {
+    .code-snippet {
+      opacity: 1;
+      @include animation('fade-in-code-snippet 5s');
+    }
+  }
+}
+
+@include keyframes(fade-in-code-snippet) {
+    0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+// slide `prototyping-essay`.
+#prototyping-essay {
+  h1 {
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  h2 {
+    margin-top: 40px;
+    text-align: center;
+    font-size: $font-size-h2 * 0.6;
+    line-height: 150%;
+  }
+
+  .detail {
+    opacity: 0;
+    padding-top: 40px;
+  }
+
+  .highlight {
+    font-size: $font-size-base * 0.55;
+    background-color: transparent;
+  }
+
+  .highlight:first-child {
+    float: right;
+  }
+
+  &.present, &.past {
+    .detail {
+      opacity: 1;
+      @include animation('fade-in-prototyping-detail 5s');
+    }
+  }
+}
+
+@include keyframes(fade-in-prototyping-detail) {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+// slide `menu-developing`.
+#menu-developing {
+  li:nth-child(-n + 2) {
+    color: $menu-text-fade-color;
+    background-color: $past-menu-background-color;
+  }
+
+  &.present, &.past {
+    li:nth-child(3) {
+      color: $menu-text-fade-color;
+      background-color: $past-menu-background-color;
+      @include animation('gray-out-menu-item 2s');
+    }
+
+    .left-star {
+      left: -24px;
+      top: 326px;
+      @include animation('move-down-star 2s', 'rotate-star 1s linear infinite');
+    }
+
+    .right-star {
+      left: 210px;
+      top: 326px;
+      @include animation('move-down-star 2s', 'rotate-star 1s linear infinite reverse');
+    }
+  }
+}
+
+// slide `developing`.
+#developing {
+  h1 {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  ul {
+    margin-top: 40px;
+    text-align: center;
+    font-size: $font-size-h2;
+    line-height: 150%;
+  }
+}
+
+// slide `developing-essay`.
+#developing-essay {
+  h1 {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  ul {
+    margin-top: 40px;
+    text-align: center;
+    line-height: 150%;
+    font-size: $font-size-base;
+  }
+}
+
+// slide `thank-you`.
+#thank-you {
+  opacity: 0;
+
+  &.present, &.past {
+    opacity: 1;
+    @include animation('fade-in-thank-you 2s');
+  }
+
+  .poem {
+    text-align: center;
+  }
+
+  .poem li {
+    display: inline-block;
+    margin: 5px;
+    color: fade-out(black, 0.7);
+    font-size: $font-size-base * 0.7;
+  }
+
+  li.thanks {
+    display: block;
+    margin: 40px;
+    font-size: $font-size-h1;
+    color: black;
+    text-align: center;
+  }
+}
+
+@include keyframes(fade-in-thank-you) {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+// common menu animations used by all menus.
+.stars {
+  display: table-cell;
+  text-align: center;
+  height: 0;
+}
+
+.left-star, .right-star {
+  position: absolute;
+  font-size: $font-size-base * 3;
+}
+
+@include keyframes(rotate-star) {
+  from { @include transform( rotateY( 0deg ) ); }
+    to { @include transform( rotateY( 360deg ) );}
+}
+
+@include keyframes(move-down-star) {
+  from { margin-top: -80px; }
+    to { margin-top: 0; }
+}
+
+@include keyframes(gray-out-menu-item) {
+  from { color: $menu-text-color; background-color: $shadow-box-background-color; }
+    to { color: $menu-text-fade-color; background-color: $past-menu-background-color; }
+}
