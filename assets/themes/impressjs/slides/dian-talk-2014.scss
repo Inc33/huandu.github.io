@@ -1,5 +1,6 @@
 $screen-width: 1280px;
 $screen-height: 800px;
+$slide-width: 688px;
 $slide-step-scale: 0.6;
 $slide-step-width: $screen-width * $slide-step-scale;
 $slide-step-height: $screen-height * $slide-step-scale;
@@ -217,7 +218,7 @@ body {
   }
 
   .mail {
-    text-decoration: underline;
+    text-decoration: none;
   }
 
   &.present {
@@ -383,12 +384,11 @@ body {
       font-size: $font-size-base;
       left: 100px;
       top: 200px;
-      @include transform( rotate(-15deg) );
     }
 
     li:nth-child(5) {
-      font-size: $font-size-base * 1.3;
-      left: 550px;
+      font-size: $font-size-base * 1.8;
+      left: 500px;
       top: 120px;
     }
 
@@ -778,12 +778,20 @@ body {
   }
 
   .highlight {
+    display: inline-block;
     font-size: $font-size-base * 0.55;
-    background-color: transparent;
+    box-shadow: 0 5px 10px $shadow-color;
+    line-height: 120%;
+    padding: 10px;
   }
 
   .highlight:first-child {
+    display: block;
     float: right;
+  }
+
+  .highlight:last-child {
+    display: inline-block;
   }
 
   &.present, &.past {
@@ -840,6 +848,43 @@ body {
     font-size: $font-size-h2;
     line-height: 150%;
   }
+
+  &.present, &.past {
+    ul {
+      li:nth-child(1) {
+        @include transform( rotate( 4deg ) );
+        @include animation('rotate-li-style-1 5s');
+      }
+
+      li:nth-child(2) {
+        @include transform( rotate( -3deg ) );
+        @include animation('rotate-li-style-2 6s');
+      }
+
+      li:nth-child(3) {
+        @include transform( rotate( 3deg ) );
+        @include animation('rotate-li-style-3 7s');
+      }
+    }
+  }
+}
+
+@include keyframes(rotate-li-style-1) {
+    0% { @include transform( rotate( 0deg ) ); }
+   90% { @include transform( rotate( 0deg ) ); }
+  100% { @include transform( rotate( 4deg ) ); }
+}
+
+@include keyframes(rotate-li-style-2) {
+    0% { @include transform( rotate( 0deg ) ); }
+   93% { @include transform( rotate( 0deg ) ); }
+  100% { @include transform( rotate( -3deg ) ); }
+}
+
+@include keyframes(rotate-li-style-3) {
+    0% { @include transform( rotate( 0deg ) ); }
+   95% { @include transform( rotate( 0deg ) ); }
+  100% { @include transform( rotate( 3deg ) ); }
 }
 
 // slide `developing-essay`.
@@ -879,16 +924,64 @@ body {
 
   li.thanks {
     display: block;
-    margin: 40px;
+    margin-top: 30px;
     font-size: $font-size-h1;
     color: black;
     text-align: center;
+  }
+
+  li.href {
+    display: block;
+    margin: 10px 0 30px;
+    text-align: center;
+
+    a {
+      color: gray;
+    }
   }
 }
 
 @include keyframes(fade-in-thank-you) {
   0% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+// slide `summary`.
+#summary.present ~ #title {
+  * {
+    opacity: 1 !important;
+  }
+}
+
+#summary {
+  .powered-by {
+    display: none;
+    position: absolute;
+    top: 400px;
+    width: $slide-width;
+    text-align: center;
+    font-size: $font-size-base * 0.5;
+
+    li {
+      display: inline-block;
+      margin: 10px;
+
+      a {
+        color: gray;
+        text-decoration: none;
+      }
+    }
+
+    img {
+      vertical-align: middle;
+    }
+  }
+
+  &.present {
+    .powered-by {
+      display: block;
+    }
+  }
 }
 
 // common menu animations used by all menus.
