@@ -1,3 +1,10 @@
+# Github only allows following gems.
+gems:
+  - jekyll-mentions
+  - jemoji
+  - jekyll-redirect-from
+  - jekyll-sitemap
+
 # This is the default format. 
 # For more see: http://jekyllrb.com/docs/permalinks/
 permalink: /:categories/:year/:month/:day/:title 
@@ -149,3 +156,4 @@ JB :
   # where [HELPER] is the name of the helper you are overriding.
   posts_collate :
     provider : "custom"
+
