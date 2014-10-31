@@ -136,6 +136,7 @@ script_file: dian-talk-2014.js
   <h1>疯狂编码</h1>
 
   <div class="code-snippet">
+{% highlight cpp %}
 JSObject * ShanaUI::createSekai() {
   JSObject *sekaiObj = JS_NewObject(jsContext(), &_sekaiClass, _sekaiPrototype, NULL);
   SHANA_ASSERT(sekaiObj, "cannot create sekai object.");
@@ -143,7 +144,9 @@ JSObject * ShanaUI::createSekai() {
   JS_SetReservedSlot(sekaiObj, 1, JSVAL_ZERO);
   return sekaiObj;
 }
+{% endhighlight %}
 
+{% highlight cpp %}
 public:
   static ShanaUIPtr create(const ::std::string &name = DEFAULT_NAME);
 
@@ -169,7 +172,9 @@ public:
   inline void start(const char *index) {
     start(::std::string(index));
   }
+{% endhighlight %}
 
+{% highlight javascript %}
 /**
 * make paramsChecker to a handler function.
 * @param paramsChecker
@@ -207,7 +212,9 @@ ApiHandler.prototype = {
   * @param {Function} handler
   */
   next: function(handler) {
+{% endhighlight %}
 
+{% highlight cpp %}
 SHANA_INITIALIZE {
   auto jsClass = SJSClass::create<SDragEvent>();
   jsClass->registerClass();
@@ -219,7 +226,9 @@ SHANA_INITIALIZE {
   SHANA_JS_CLASS_STATIC_CONSTANT(jsClass, "DRAG_START", SDragEvent::DragEventType, SDragEvent::DRAG_START);
   SHANA_JS_CLASS_STATIC_CONSTANT(jsClass, "DRAG_END", SDragEvent::DragEventType, SDragEvent::DRAG_END);
 }
+{% endhighlight %}
 
+{% highlight javascript %}
 // return a function can be used by WolfClient directly.
 var makeCallback = function(api, cb, scope) {
   var startTime = Date.now();
@@ -238,6 +247,7 @@ var makeCallback = function(api, cb, scope) {
     }
   });
 };
+{% endhighlight %}
   </div>
 </div>
 
@@ -245,15 +255,19 @@ var makeCallback = function(api, cb, scope) {
   <h1>抓住闪光点</h1>
 
   <section class="detail">
+{% highlight cpp %}
 // C++ 代码
 node->on("tap", [this] (STapEventPtr e) {
   // 事件处理
 });
+{% endhighlight %}
 
+{% highlight javascript %}
 // Javascript 代码
 node.on("tap", function(e) {
   // 事件处理
 });
+{% endhighlight %}
 
     <div class="clearfix"></div>
     <h2>业务和框架在实现时都不需要关心语言差异<br/>做得到么？</h2>
