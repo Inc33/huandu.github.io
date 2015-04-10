@@ -26,4 +26,4 @@ The only problem I have is a build error when building nginx binary package. The
 	dpkg-buildpackage: warning: Build dependencies/conflicts unsatisfied; aborting.
 	dpkg-buildpackage: warning: (Use -d flag to override.)
 
-It requires `libgd2-dev` or `libgd2-noxpm-dev` to continue. OK, I just install `apt-get install libdg2-noxpm-dev` to fix it.
+It requires `libgd2-dev` or `libgd2-noxpm-dev` to continue. OK, I just install `apt-get install libgd2-noxpm-dev` to fix it.
